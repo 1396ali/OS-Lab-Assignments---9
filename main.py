@@ -72,7 +72,7 @@ def maximum(message):
     bot.register_next_step_handler(arry , max_searching)
 
 def max_searching(arry):  
-    temp = list(map(int, arry.text.split(',')))
+    temp = list(map(int, arry.text.split(",")))
     number = max(temp)
     bot.send_message(arry.chat.id , number)
 #
@@ -83,7 +83,7 @@ def maximum_index(message):
     bot.register_next_step_handler(arry , index_searching)
 
 def index_searching(arry):
-    temp = list(map(int, arry.text.split(',')))
+    temp = list(map(int, arry.text.split(",")))
     ind = temp.index(max(temp))
     bot.send_message(arry.chat.id , (ind+1))
 #
