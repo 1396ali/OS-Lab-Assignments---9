@@ -25,6 +25,7 @@ def send_help(message):
 
 @bot.message_handler(commands=['game'])
 def game(message):
+
     global rand
     rand  = randint(0,10)
     inp = bot.send_message(message.chat.id , 'Enter your guess: [0-10]')
@@ -32,14 +33,33 @@ def game(message):
 
 
 def game_guess(inp):
-    if int(inp.text) > rand:
-        inp = bot.send_message(inp.chat.id , 'is UP' )
-        bot.register_next_step_handler(inp , game_guess)
-    elif int(inp.text) < rand:
-        inp = bot.send_message(inp.chat.id , 'is DOWN' )
-        bot.register_next_step_handler(inp , game_guess)
+    markup = telebot.types.ReplyKeyboardMarkup(row_width=3)
+    btn_new = telebot.types.KeyboardButton('new')
+    btn_exit = telebot.types.KeyboardButton('exit')
+    markup.add(btn_new,btn_exit)
+    
+    if inp.text == 'new':
+        inp = bot.send_message(inp.chat.id, 'Again:',reply_markup=markup)
+        global rand
+        rand = randint(0,10)
+        bot.register_next_step_handler(inp, game_guess)
+
+    elif inp.text == 'exit':
+        markup = telebot.types.ReplyKeyboardRemove(selective=True)
+        inp = bot.send_message(inp.chat.id, 'end - /help',reply_markup=markup)
+        bot.send_message(inp, game_guess)
+        
     else:
-        bot.send_message(inp.chat.id , 'YES-END!- /help' )
+        if int(inp.text) > rand:
+            inp = bot.send_message(inp.chat.id , 'is UP' ,reply_markup=markup)
+            bot.register_next_step_handler(inp , game_guess)
+        elif int(inp.text) < rand:
+            inp = bot.send_message(inp.chat.id , 'is DOWN' ,reply_markup=markup)
+            bot.register_next_step_handler(inp , game_guess)
+        else:
+            markup = telebot.types.ReplyKeyboardRemove(selective=True)
+            bot.send_message(inp.chat.id , 'YES-END!- /help' ,reply_markup=markup)
+            
 #
 
 @bot.message_handler(commands=['age'])
@@ -72,7 +92,7 @@ def maximum(message):
     bot.register_next_step_handler(arry , max_searching)
 
 def max_searching(arry):  
-    temp = list(map(int, arry.text.split(",")))
+    temp = list(map(int, arry.text.split(',')))
     number = max(temp)
     bot.send_message(arry.chat.id , number)
 #
@@ -83,7 +103,7 @@ def maximum_index(message):
     bot.register_next_step_handler(arry , index_searching)
 
 def index_searching(arry):
-    temp = list(map(int, arry.text.split(",")))
+    temp = list(map(int, arry.text.split(',')))
     ind = temp.index(max(temp))
     bot.send_message(arry.chat.id , (ind+1))
 #
